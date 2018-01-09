@@ -64,6 +64,13 @@ this.Bootstrap = {
       return;
     }
 
+    const payload = [{
+      url: '*',
+      timestamp: Math.round(Date.now() / 1000),
+      details: `pathfinder::startup:${reason}`,
+    }];
+    await Pioneer.utils.submitEncryptedPing("online-news-log", 1, { entries: payload });
+
     // Always set EXPIRATION_DATE_PREF if it not set, even if outside of install.
     // This is a failsafe if opt-out expiration doesn't work, so should be resilient.
     let expirationDate = PrefUtils.getLongPref(EXPIRATION_DATE_PREF, 0);
@@ -109,7 +116,7 @@ this.Bootstrap = {
     Phases.startup();
   },
 
-  shutdown(data, reason) {
+  async shutdown(data, reason) {
     // In case the observer didn't run, clean it up.
     try {
       Services.obs.removeObserver(this, UI_AVAILABLE_NOTIFICATION);
@@ -120,6 +127,13 @@ this.Bootstrap = {
     if (reason === REASONS.ADDONS_UNINSTALL) {
       State.clear();
     }
+
+    const payload = [{
+      url: '*',
+      timestamp: Math.round(Date.now() / 1000),
+      details: `pathfinder::shutdown:${reason}`,
+    }];
+    await Pioneer.utils.submitEncryptedPing("online-news-log", 1, { entries: payload });
 
     DwellTime.shutdown();
     ActiveURIService.shutdown();
