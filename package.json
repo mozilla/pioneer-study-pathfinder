@@ -1,0 +1,18 @@
+{
+  "name": "pioneer-study-pathfinder",
+  "version": "1.0.0",
+  "description": "An addon to help track down data loss in the Pioneer data-collection pipeline.",
+  "scripts": {
+    "build": "XPI=pioneer-study-pathfinder@mozilla.org.xpi bash ./bin/make-xpi.sh"
+  },
+  "keywords": [],
+  "author": "Mozilla",
+  "license": "MPL-2.0",
+  "devDependencies": {
+    "eslint": "^4.11.0",
+    "eslint-plugin-mozilla": "^0.4.9",
+    "eslint-plugin-no-unsanitized": "^2.0.1",
+    "mustache": "^2.3.0",
+    "pioneer-utils": "^1.0.9"
+  }
+}

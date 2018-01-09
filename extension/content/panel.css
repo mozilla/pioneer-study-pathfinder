@@ -1,0 +1,13 @@
+#online-news-bias-panel {
+  width: 400px;
+  height: 220px;
+}
+
+#online-news-survey-panel {
+  width: 400px;
+  height: 130px;
+}
+
+.pioneer-panel > .panel-arrowcontainer > .panel-arrowcontent {
+  padding: 0 !important;
+}
