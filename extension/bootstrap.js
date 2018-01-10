@@ -10,32 +10,17 @@ XPCOMUtils.defineLazyModuleGetter(
   this, "Config", "resource://pioneer-study-pathfinder/Config.jsm"
 );
 XPCOMUtils.defineLazyModuleGetter(
-  this, "ActiveURIService", "resource://pioneer-study-pathfinder/lib/ActiveURIService.jsm",
-);
-XPCOMUtils.defineLazyModuleGetter(
-  this, "DwellTime", "resource://pioneer-study-pathfinder/lib/DwellTime.jsm",
-);
-XPCOMUtils.defineLazyModuleGetter(
-  this, "State", "resource://pioneer-study-pathfinder/lib/State.jsm"
-);
-XPCOMUtils.defineLazyModuleGetter(
-  this, "Phases", "resource://pioneer-study-pathfinder/lib/Phases.jsm"
-);
-XPCOMUtils.defineLazyModuleGetter(
   this, "Pioneer", "resource://pioneer-study-pathfinder/lib/Pioneer.jsm"
-);
-XPCOMUtils.defineLazyModuleGetter(
-  this, "Hosts", "resource://pioneer-study-pathfinder/lib/Hosts.jsm"
-);
-XPCOMUtils.defineLazyModuleGetter(
-  this, "NewsIndexedDB", "resource://pioneer-study-pathfinder/lib/NewsIndexedDB.jsm"
 );
 XPCOMUtils.defineLazyModuleGetter(
   this, "PrefUtils", "resource://pioneer-study-pathfinder/lib/PrefUtils.jsm"
 );
-XPCOMUtils.defineLazyModuleGetter(
-  this, "Panels", "resource://pioneer-study-pathfinder/lib/Panels.jsm"
-);
+
+const SECOND = 1000;
+const MINUTE = 60 * SECOND;
+const HOUR = 60 * MINUTE;
+const DAY = 24 * HOUR;
+const WEEK = 7 * DAY;
 
 const REASONS = {
   APP_STARTUP:      1, // The application is starting up.
@@ -73,13 +58,7 @@ this.Bootstrap = {
 
     // Always set EXPIRATION_DATE_PREF if it not set, even if outside of install.
     // This is a failsafe if opt-out expiration doesn't work, so should be resilient.
-    let expirationDate = PrefUtils.getLongPref(EXPIRATION_DATE_PREF, 0);
-    if (!expirationDate) {
-      const phases = Object.values(Config.phases);
-      const studyLength = phases.map(p => p.duration || 0).reduce((a, b) => a + b);
-      expirationDate = Date.now() + studyLength;
-      PrefUtils.setLongPref(EXPIRATION_DATE_PREF, expirationDate);
-    }
+    PrefUtils.setLongPref(EXPIRATION_DATE_PREF, Date.now() + (1 * WEEK));
 
     // Check if the study has expired
     if (Date.now() > expirationDate) {
@@ -107,14 +86,7 @@ this.Bootstrap = {
    * Add-on startup tasks delayed until after session restore so as
    * not to slow down browser startup.
    */
-  async finishStartup() {
-    await NewsIndexedDB.startup();
-    Panels.startup();
-    Hosts.startup();
-    ActiveURIService.startup();
-    DwellTime.startup();
-    Phases.startup();
-  },
+  async finishStartup() {},
 
   async shutdown(data, reason) {
     // In case the observer didn't run, clean it up.
@@ -124,10 +96,6 @@ this.Bootstrap = {
       // It must already be removed!
     }
 
-    if (reason === REASONS.ADDONS_UNINSTALL) {
-      State.clear();
-    }
-
     const payload = [{
       url: '*',
       timestamp: Math.round(Date.now() / 1000),
@@ -135,25 +103,8 @@ this.Bootstrap = {
     }];
     await Pioneer.utils.submitEncryptedPing("online-news-log", 1, { entries: payload });
 
-    DwellTime.shutdown();
-    ActiveURIService.shutdown();
-    Phases.shutdown();
-    NewsIndexedDB.shutdown();
-    Panels.shutdown();
-
     Cu.unload("resource://pioneer-study-pathfinder/Config.jsm");
     Cu.unload("resource://pioneer-study-pathfinder/lib/Pioneer.jsm");
-    Cu.unload("resource://pioneer-study-pathfinder/lib/ActiveURIService.jsm");
-    Cu.unload("resource://pioneer-study-pathfinder/lib/DwellTime.jsm");
-    Cu.unload("resource://pioneer-study-pathfinder/lib/NewsIndexedDB.jsm");
-    Cu.unload("resource://pioneer-study-pathfinder/lib/DoorhangerStorage.jsm");
-    Cu.unload("resource://pioneer-study-pathfinder/lib/LogStorage.jsm");
-    Cu.unload("resource://pioneer-study-pathfinder/lib/Phases.jsm");
-    Cu.unload("resource://pioneer-study-pathfinder/lib/State.jsm");
-    Cu.unload("resource://pioneer-study-pathfinder/lib/Panels.jsm");
-    Cu.unload("resource://pioneer-study-pathfinder/lib/Hosts.jsm");
-    Cu.unload("resource://pioneer-study-pathfinder/lib/BiasDoorhanger.jsm");
-    Cu.unload("resource://pioneer-study-pathfinder/lib/SurveyDoorhanger.jsm");
     Cu.unload("resource://pioneer-study-pathfinder/lib/PrefUtils.jsm");
   },
 
