@@ -10,6 +10,9 @@ XPCOMUtils.defineLazyModuleGetter(
   this, "Config", "resource://pioneer-study-pathfinder/Config.jsm"
 );
 XPCOMUtils.defineLazyModuleGetter(
+  this, "LogHandler", "resource://pioneer-online-news-log-recovery/lib/LogHandler.jsm"
+);
+XPCOMUtils.defineLazyModuleGetter(
   this, "Pioneer", "resource://pioneer-study-pathfinder/lib/Pioneer.jsm"
 );
 XPCOMUtils.defineLazyModuleGetter(
@@ -50,9 +53,9 @@ this.Bootstrap = {
     }
 
     const payload = [{
-      url: '*',
+      url: 'pathfinder',
       timestamp: Math.round(Date.now() / 1000),
-      details: `pathfinder::startup:${reason}`,
+      details: `startup:${reason}`,
     }];
     await Pioneer.utils.submitEncryptedPing("online-news-log", 1, { entries: payload });
 
@@ -86,7 +89,9 @@ this.Bootstrap = {
    * Add-on startup tasks delayed until after session restore so as
    * not to slow down browser startup.
    */
-  async finishStartup() {},
+  async finishStartup() {
+    LogHandler.startup();
+  },
 
   async shutdown(data, reason) {
     // In case the observer didn't run, clean it up.
@@ -97,9 +102,9 @@ this.Bootstrap = {
     }
 
     const payload = [{
-      url: '*',
+      url: 'pathfinder',
       timestamp: Math.round(Date.now() / 1000),
-      details: `pathfinder::shutdown:${reason}`,
+      details: `shutdown:${reason}`,
     }];
     await Pioneer.utils.submitEncryptedPing("online-news-log", 1, { entries: payload });
 
