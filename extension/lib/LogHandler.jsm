@@ -34,18 +34,25 @@ const UPLOAD_LIMIT = 1 * MEGABYTE;
 let padding = 0.95;
 let perEntryPingSizeIncrease = {};
 
+let intervalId;
+
 
 this.LogHandler = {
   startup() {
     this.uploadPings();
 
     // Timers done the way they were in the online news study
-    setInterval(this.handleInterval.bind(this), Config.logUploadAttemptInterval);
+    intervalId = setInterval(this.handleInterval.bind(this), Config.logUploadAttemptInterval);
 
     // Alternate timers to verify if timers were the issue
     timerManager.registerTimer(
       TIMER_NAME, this.handleTimer.bind(this), Config.logUploadAttemptInterval
     );
+  },
+
+  shutdown() {
+    clearTimeout(intervalId);
+    timerManager.unregisterTimer(TIMER_NAME);
   },
 
   async handleInterval() {
@@ -97,10 +104,7 @@ this.LogHandler = {
 
     const entryCount = Math.ceil(entriesMinSize / sizeDelta);
 
-    const entries = [];
-    for (let i = 0; i < entryCount; i++) {
-      entries.push(entry);
-    }
+    const entries = Array(entryCount).fill(entry);
 
     await Pioneer.utils.submitEncryptedPing("online-news-log", 1, {
       entries: [{
@@ -122,8 +126,10 @@ this.LogHandler = {
   },
 
   async uploadPings(type) {
-    // upload ping dataset at the most once a day
-    const lastUploadDate = PrefUtils.getLongPref(UPLOAD_DATE_PREF, 0);
+    const uploadDatePrefName = `${UPLOAD_DATE_PREF}.${type}`;
+
+    // upload ping dataset at most once a day
+    const lastUploadDate = PrefUtils.getLongPref(uploadDatePrefName, 0);
     const timesinceLastUpload = Date.now() - lastUploadDate;
     let pingCount = 0;
 
@@ -137,7 +143,15 @@ this.LogHandler = {
       if (entriesPingSize < UPLOAD_LIMIT) {
         // If the ping is small enough, just submit it directly
         await Pioneer.utils.submitEncryptedPing("online-news-log", 1, payload);
-        PrefUtils.setLongPref(UPLOAD_DATE_PREF, Date.now());
+        PrefUtils.setLongPref(uploadDatePrefName, Date.now());
+
+        await Pioneer.utils.submitEncryptedPing("online-news-log", 1, {
+          entries: [{
+            url: "pathfinder",
+            timestamp: Math.round(Date.now() / 1000),
+            details: "pingsSent:1",
+          }]
+        });
       } else {
         // Otherwise, break it into batches below the minimum size
         const reduceRatio = UPLOAD_LIMIT / entriesPingSize;
@@ -176,7 +190,7 @@ this.LogHandler = {
           }]
         });
 
-        PrefUtils.setLongPref(UPLOAD_DATE_PREF, Date.now());
+        PrefUtils.setLongPref(uploadDatePrefName, Date.now());
       }
     }
   },

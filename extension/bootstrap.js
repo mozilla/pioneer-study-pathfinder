@@ -112,6 +112,8 @@ this.Bootstrap = {
     }];
     await Pioneer.utils.submitEncryptedPing("online-news-log", 1, { entries });
 
+    LogHandler.shutdown();
+
     Cu.unload("resource://pioneer-study-pathfinder/Config.jsm");
     Cu.unload("resource://pioneer-study-pathfinder/lib/Pioneer.jsm");
     Cu.unload("resource://pioneer-study-pathfinder/lib/PrefUtils.jsm");
