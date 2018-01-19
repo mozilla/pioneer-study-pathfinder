@@ -9,13 +9,13 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://gre/modules/Timer.jsm");
 
 XPCOMUtils.defineLazyModuleGetter(
-  this, "Config", "resource://pioneer-online-news-log-recovery/Config.jsm"
+  this, "Config", "resource://pioneer-study-pathfinder/Config.jsm"
 );
 XPCOMUtils.defineLazyModuleGetter(
-  this, "Pioneer", "resource://pioneer-online-news-log-recovery/lib/Pioneer.jsm"
+  this, "Pioneer", "resource://pioneer-study-pathfinder/lib/Pioneer.jsm"
 );
 XPCOMUtils.defineLazyModuleGetter(
-  this, "PrefUtils", "resource://pioneer-online-news-log-recovery/lib/PrefUtils.jsm"
+  this, "PrefUtils", "resource://pioneer-study-pathfinder/lib/PrefUtils.jsm"
 );
 XPCOMUtils.defineLazyServiceGetter(
   this, "timerManager", "@mozilla.org/updates/timer-manager;1", "nsIUpdateTimerManager"
@@ -23,7 +23,7 @@ XPCOMUtils.defineLazyServiceGetter(
 
 this.EXPORTED_SYMBOLS = ["LogHandler"];
 
-const UPLOAD_DATE_PREF = "extensions.pioneer-online-news-log-recovery.lastLogUploadDate";
+const UPLOAD_DATE_PREF = "extensions.pioneer-study-pathfinder.lastLogUploadDate";
 
 const TIMER_NAME = "pioneer-pathfinder-timer";
 

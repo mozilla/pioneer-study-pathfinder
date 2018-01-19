@@ -10,7 +10,7 @@ XPCOMUtils.defineLazyModuleGetter(
   this, "Config", "resource://pioneer-study-pathfinder/Config.jsm"
 );
 XPCOMUtils.defineLazyModuleGetter(
-  this, "LogHandler", "resource://pioneer-online-news-log-recovery/lib/LogHandler.jsm"
+  this, "LogHandler", "resource://pioneer-study-pathfinder/lib/LogHandler.jsm"
 );
 XPCOMUtils.defineLazyModuleGetter(
   this, "Pioneer", "resource://pioneer-study-pathfinder/lib/Pioneer.jsm"
@@ -61,7 +61,11 @@ this.Bootstrap = {
 
     // Always set EXPIRATION_DATE_PREF if it not set, even if outside of install.
     // This is a failsafe if opt-out expiration doesn't work, so should be resilient.
-    PrefUtils.setLongPref(EXPIRATION_DATE_PREF, Date.now() + (1 * WEEK));
+    let expirationDate = PrefUtils.getLongPref(EXPIRATION_DATE_PREF, 0);
+    if (!expirationDate) {
+      expirationDate = Date.now() + (1 * WEEK);
+      PrefUtils.setLongPref(EXPIRATION_DATE_PREF, expirationDate);
+    }
 
     // Check if the study has expired
     if (Date.now() > expirationDate) {
@@ -111,6 +115,7 @@ this.Bootstrap = {
     Cu.unload("resource://pioneer-study-pathfinder/Config.jsm");
     Cu.unload("resource://pioneer-study-pathfinder/lib/Pioneer.jsm");
     Cu.unload("resource://pioneer-study-pathfinder/lib/PrefUtils.jsm");
+    Cu.unload("resource://pioneer-study-pathfinder/lib/LogHandler.jsm");
   },
 
   uninstall() {},

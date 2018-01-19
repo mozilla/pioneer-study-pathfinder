@@ -16,7 +16,7 @@ const DAY = 24 * HOUR;
 const WEEK = 7 * DAY;
 
 const Config = {
-  addonId: "pioneer-study-pathfinder@mozilla.org",
+  addonId: "pioneer-study-pathfinder@pioneer.mozilla.org",
   studyName: "online-news",
   branches: [
     { name: "control", weight: 1 },
