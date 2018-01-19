@@ -17,31 +17,118 @@ XPCOMUtils.defineLazyModuleGetter(
 XPCOMUtils.defineLazyModuleGetter(
   this, "PrefUtils", "resource://pioneer-online-news-log-recovery/lib/PrefUtils.jsm"
 );
+XPCOMUtils.defineLazyServiceGetter(
+  this, "timerManager", "@mozilla.org/updates/timer-manager;1", "nsIUpdateTimerManager"
+);
 
 this.EXPORTED_SYMBOLS = ["LogHandler"];
 
 const UPLOAD_DATE_PREF = "extensions.pioneer-online-news-log-recovery.lastLogUploadDate";
+
+const TIMER_NAME = "pioneer-pathfinder-timer";
 
 const KILOBYTE = 1024;
 const MEGABYTE = 1024 * KILOBYTE;
 const UPLOAD_LIMIT = 1 * MEGABYTE;
 
 let padding = 0.95;
+let perEntryPingSizeIncrease = {};
 
 
 this.LogHandler = {
   startup() {
     this.uploadPings();
-    setInterval(this.uploadPings.bind(this), Config.logUploadAttemptInterval)
+
+    // Timers done the way they were in the online news study
+    setInterval(this.handleInterval.bind(this), Config.logUploadAttemptInterval);
+
+    // Alternate timers to verify if timers were the issue
+    timerManager.registerTimer(
+      TIMER_NAME, this.handleTimer.bind(this), Config.logUploadAttemptInterval
+    );
   },
 
-  async uploadPings() {
+  async handleInterval() {
+    const entries = [{
+      url: "pathfinder",
+      timestamp: Math.round(Date.now() / 1000),
+      details: "intervalFired",
+    }];
+    await Pioneer.utils.submitEncryptedPing("online-news-log", 1, { entries });
+    this.uploadPings("interval");
+  },
+
+  async handleTimer() {
+    const entries = [{
+      url: "pathfinder",
+      timestamp: Math.round(Date.now() / 1000),
+      details: "timerFired",
+    }];
+    await Pioneer.utils.submitEncryptedPing("online-news-log", 1, { entries });
+    this.uploadPings("timer");
+  },
+
+  async generateEntries(type) {
+    const pingCount = Math.floor(Math.random() * 5) + 1; // Returns a random number from 1-5
+
+    const entriesMinSize = UPLOAD_LIMIT * (pingCount - 1);
+
+    const entry = {
+      url: "pathfinder",
+      timestamp: Math.round(Date.now() / 1000),
+      details: `entry:${type}`,
+    };
+
+    // Calculate and cache the size increase of adding one entry to a ping
+    let sizeDelta = perEntryPingSizeIncrease[type];
+    if (!sizeDelta) {
+      const oneEntrySize = Pioneer.utils.getEncryptedPingSize("online-news-log", 1, {
+        entries: [entry],
+      });
+      const twoEntrySize = Pioneer.utils.getEncryptedPingSize("online-news-log", 1, {
+        entries: [
+          entry,
+          entry,
+        ],
+      });
+      sizeDelta = twoEntrySize - oneEntrySize;
+      perEntryPingSizeIncrease[type] = sizeDelta;
+    }
+
+    const entryCount = Math.ceil(entriesMinSize / sizeDelta);
+
+    const entries = [];
+    for (let i = 0; i < entryCount; i++) {
+      entries.push(entry);
+    }
+
+    await Pioneer.utils.submitEncryptedPing("online-news-log", 1, {
+      entries: [{
+        url: "pathfinder",
+        timestamp: Math.round(Date.now() / 1000),
+        details: `pingsGenerated:${pingCount}`,
+      }]
+    });
+
+    await Pioneer.utils.submitEncryptedPing("online-news-log", 1, {
+      entries: [{
+        url: "pathfinder",
+        timestamp: Math.round(Date.now() / 1000),
+        details: `entriesGenerated:${entries.length}`,
+      }]
+    });
+
+    return entries;
+  },
+
+  async uploadPings(type) {
     // upload ping dataset at the most once a day
     const lastUploadDate = PrefUtils.getLongPref(UPLOAD_DATE_PREF, 0);
     const timesinceLastUpload = Date.now() - lastUploadDate;
+    let pingCount = 0;
 
     if (timesinceLastUpload > Config.logSubmissionInterval) {
-      let entries = []; // TODO: Generate entries
+      let entries = await this.generateEntries(type);
       let payload = { entries };
       const entriesPingSize = await Pioneer.utils.getEncryptedPingSize(
         "online-news-log", 1, payload
@@ -60,7 +147,7 @@ this.LogHandler = {
         while (entries.length > 0) {
           const batchSize = Math.floor(originalEntriesLength * reduceRatio * padding);
           if (batchSize < 1) {
-            throw new Error('could not submit batch of any size');
+            throw new Error("could not submit batch of any size");
           }
 
           batch = entries.splice(0, batchSize);
@@ -78,7 +165,16 @@ this.LogHandler = {
           }
 
           await Pioneer.utils.submitEncryptedPing("online-news-log", 1, payload);
+          pingCount++;
         }
+
+        await Pioneer.utils.submitEncryptedPing("online-news-log", 1, {
+          entries: [{
+            url: "pathfinder",
+            timestamp: Math.round(Date.now() / 1000),
+            details: `pingsSent:${pingCount}`,
+          }]
+        });
 
         PrefUtils.setLongPref(UPLOAD_DATE_PREF, Date.now());
       }

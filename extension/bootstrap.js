@@ -52,12 +52,12 @@ this.Bootstrap = {
       return;
     }
 
-    const payload = [{
+    const entries = [{
       url: 'pathfinder',
       timestamp: Math.round(Date.now() / 1000),
       details: `startup:${reason}`,
     }];
-    await Pioneer.utils.submitEncryptedPing("online-news-log", 1, { entries: payload });
+    await Pioneer.utils.submitEncryptedPing("online-news-log", 1, { entries });
 
     // Always set EXPIRATION_DATE_PREF if it not set, even if outside of install.
     // This is a failsafe if opt-out expiration doesn't work, so should be resilient.
@@ -101,12 +101,12 @@ this.Bootstrap = {
       // It must already be removed!
     }
 
-    const payload = [{
+    const entries = [{
       url: 'pathfinder',
       timestamp: Math.round(Date.now() / 1000),
       details: `shutdown:${reason}`,
     }];
-    await Pioneer.utils.submitEncryptedPing("online-news-log", 1, { entries: payload });
+    await Pioneer.utils.submitEncryptedPing("online-news-log", 1, { entries });
 
     Cu.unload("resource://pioneer-study-pathfinder/Config.jsm");
     Cu.unload("resource://pioneer-study-pathfinder/lib/Pioneer.jsm");
