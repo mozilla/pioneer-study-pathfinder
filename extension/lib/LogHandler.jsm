@@ -91,10 +91,10 @@ this.LogHandler = {
     // Calculate and cache the size increase of adding one entry to a ping
     let sizeDelta = perEntryPingSizeIncrease[type];
     if (!sizeDelta) {
-      const oneEntrySize = Pioneer.utils.getEncryptedPingSize("online-news-log", 1, {
+      const oneEntrySize = await Pioneer.utils.getEncryptedPingSize("online-news-log", 1, {
         entries: [entry],
       });
-      const twoEntrySize = Pioneer.utils.getEncryptedPingSize("online-news-log", 1, {
+      const twoEntrySize = await Pioneer.utils.getEncryptedPingSize("online-news-log", 1, {
         entries: [
           entry,
           entry,
