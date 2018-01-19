@@ -51,8 +51,10 @@ this.LogHandler = {
   },
 
   shutdown() {
-    clearTimeout(intervalId);
-    timerManager.unregisterTimer(TIMER_NAME);
+    if (intervalId) {
+      clearTimeout(intervalId);
+      timerManager.unregisterTimer(TIMER_NAME);
+    }
   },
 
   async handleInterval() {
