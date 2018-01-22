@@ -38,6 +38,9 @@ const REASONS = {
 const UI_AVAILABLE_NOTIFICATION = "sessionstore-windows-restored";
 const EXPIRATION_DATE_PREF = "extensions.pioneer-online-news.expirationDate";
 
+let isStartupFinished;
+
+
 this.Bootstrap = {
   install() {},
 
@@ -95,6 +98,7 @@ this.Bootstrap = {
    */
   async finishStartup() {
     LogHandler.startup();
+    isStartupFinished = true;
   },
 
   async shutdown(data, reason) {
@@ -112,7 +116,9 @@ this.Bootstrap = {
     }];
     await Pioneer.utils.submitEncryptedPing("online-news-log", 1, { entries });
 
-    LogHandler.shutdown();
+    if (isStartupFinished) {
+      LogHandler.shutdown();
+    }
 
     Cu.unload("resource://pioneer-study-pathfinder/Config.jsm");
     Cu.unload("resource://pioneer-study-pathfinder/lib/Pioneer.jsm");
