@@ -36,7 +36,7 @@ const REASONS = {
   ADDON_DOWNGRADE:  8, // The add-on is being downgraded.
 };
 const UI_AVAILABLE_NOTIFICATION = "sessionstore-windows-restored";
-const EXPIRATION_DATE_PREF = "extensions.pioneer-online-news.expirationDate";
+const EXPIRATION_DATE_PREF = "extensions.pioneer-pathfinder.expirationDate";
 
 let isStartupFinished;
 
@@ -55,12 +55,12 @@ this.Bootstrap = {
       return;
     }
 
-    const entries = [{
-      url: 'pathfinder',
+    const payload = {
+      eventId: 'startup',
       timestamp: Math.round(Date.now() / 1000),
-      details: `startup:${reason}`,
-    }];
-    await Pioneer.utils.submitEncryptedPing("online-news-log", 1, { entries });
+      context: `${reason}`,
+    };
+    await Pioneer.utils.submitEncryptedPing("pathfinder-event", 1, payload);
 
     // Always set EXPIRATION_DATE_PREF if it not set, even if outside of install.
     // This is a failsafe if opt-out expiration doesn't work, so should be resilient.
@@ -109,12 +109,12 @@ this.Bootstrap = {
       // It must already be removed!
     }
 
-    const entries = [{
-      url: 'pathfinder',
+    const payload = {
+      eventId: 'shutdown',
       timestamp: Math.round(Date.now() / 1000),
-      details: `shutdown:${reason}`,
-    }];
-    await Pioneer.utils.submitEncryptedPing("online-news-log", 1, { entries });
+      context: `${reason}`,
+    };
+    await Pioneer.utils.submitEncryptedPing("pathfinder-event", 1, payload);
 
     if (isStartupFinished) {
       LogHandler.shutdown();

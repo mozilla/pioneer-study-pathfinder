@@ -4,10 +4,10 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const EXPORTED_SYMBOLS = ["Config"];
 
-const TELEMETRY_ENV_PREF = "extensions.pioneer-online-news.telemetryEnv";
-const LOG_INTERVAL_PREF = "extensions.pioneer-online-news.logSubmissionInterval";
-const IDLE_DELAY_PREF = "extensions.pioneer-online-news.idleDelaySeconds";
-const LOG_UPLOAD_ATTEMPT_PREF = "extensions.pioneer-online-news.logUploadAttemptInterval";
+const TELEMETRY_ENV_PREF = "extensions.pioneer-pathfinder.telemetryEnv";
+const LOG_INTERVAL_PREF = "extensions.pioneer-pathfinder.logSubmissionInterval";
+const IDLE_DELAY_PREF = "extensions.pioneer-pathfinder.idleDelaySeconds";
+const LOG_UPLOAD_ATTEMPT_PREF = "extensions.pioneer-pathfinder.logUploadAttemptInterval";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -17,10 +17,9 @@ const WEEK = 7 * DAY;
 
 const Config = {
   addonId: "pioneer-study-pathfinder@pioneer.mozilla.org",
-  studyName: "online-news",
+  studyName: "pathfinder",
   branches: [
     { name: "control", weight: 1 },
-    { name: "treatment", weight: 1, showDoorhanger: true },
   ],
   telemetryEnv: Services.prefs.getCharPref(TELEMETRY_ENV_PREF, "prod"),
 
