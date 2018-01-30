@@ -1,0 +1,14 @@
+{
+  "addon": {
+    "version": "1.0.0",
+    "id": "pioneer-study-pathfinder@pioneer.mozilla.org",
+    "name": "Pioneer Pathfinder Study",
+    "minVersion": "55.0",
+    "maxVersion": "*",
+    "multiprocessCompatible": true,
+    "hasEmbeddedWebExtension": false,
+    "creator": "Mozilla",
+    "description": "An addon to help track down data loss in the Pioneer data-collection pipeline.",
+    "chrome": "pioneer-study-pathfinder"
+  }
+}
