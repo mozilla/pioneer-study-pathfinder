@@ -46,8 +46,9 @@ this.LogHandler = {
     intervalId = setInterval(this.handleInterval.bind(this), Config.logUploadAttemptInterval);
 
     // Alternate timers to verify if timers were the issue
+    // Note: Timers require time in seconds so convert the interval setting to seconds
     timerManager.registerTimer(
-      TIMER_NAME, this.handleTimer.bind(this), Config.logUploadAttemptInterval
+      TIMER_NAME, this.handleTimer.bind(this), Config.logUploadAttemptInterval / 1000
     );
   },
 
@@ -127,7 +128,6 @@ this.LogHandler = {
   async uploadPings(type) {
     const uploadDatePrefName = `${UPLOAD_DATE_PREF}.${type}`;
 
-    // upload ping dataset at most once a day
     const lastUploadDate = PrefUtils.getLongPref(uploadDatePrefName, 0);
     const timesinceLastUpload = Date.now() - lastUploadDate;
     let pingCount = 0;
