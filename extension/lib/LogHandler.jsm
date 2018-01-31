@@ -39,7 +39,8 @@ let intervalId;
 
 this.LogHandler = {
   startup() {
-    this.uploadPings();
+    this.uploadPings("timer");
+    this.uploadPings("interval");
 
     // Timers done the way they were in the online news study
     intervalId = setInterval(this.handleInterval.bind(this), Config.logUploadAttemptInterval);
@@ -63,7 +64,7 @@ this.LogHandler = {
       timestamp: Math.round(Date.now() / 1000),
       context: "",
     };
-    await Pioneer.utils.submitEncryptedPing("pathfinder-event", 1, payload);
+    await Pioneer.submitEncryptedPing("pathfinder-event", 1, payload);
     this.uploadPings("interval");
   },
 
@@ -73,7 +74,7 @@ this.LogHandler = {
       timestamp: Math.round(Date.now() / 1000),
       context: "",
     };
-    await Pioneer.utils.submitEncryptedPing("pathfinder-log", 1, payload);
+    await Pioneer.submitEncryptedPing("pathfinder-event", 1, payload);
     this.uploadPings("timer");
   },
 
@@ -104,18 +105,18 @@ this.LogHandler = {
       perEntryPingSizeIncrease[type] = sizeDelta;
     }
 
-    const entryCount = Math.ceil(entriesMinSize / sizeDelta);
+    const entryCount = Math.ceil(entriesMinSize / (sizeDelta * padding));
 
     const entries = Array(entryCount).fill(entry);
 
-    await Pioneer.utils.submitEncryptedPing("pathfinder-event", 1, {
-      eventId: "pingsGenerated",
+    await Pioneer.submitEncryptedPing("pathfinder-event", 1, {
+      eventId: `pingsGenerated:${type}`,
       timestamp: Math.round(Date.now() / 1000),
       context: `${pingCount}`,
     });
 
-    await Pioneer.utils.submitEncryptedPing("pathfinder-event", 1, {
-      eventId: "entriesGenerated",
+    await Pioneer.submitEncryptedPing("pathfinder-event", 1, {
+      eventId: `entriesGenerated:${type}`,
       timestamp: Math.round(Date.now() / 1000),
       context: `${entries.length}`,
     });
@@ -140,11 +141,11 @@ this.LogHandler = {
 
       if (entriesPingSize < UPLOAD_LIMIT) {
         // If the ping is small enough, just submit it directly
-        await Pioneer.utils.submitEncryptedPing("pathfinder-log", 1, payload);
+        await Pioneer.submitEncryptedPing("pathfinder-log", 1, payload);
         PrefUtils.setLongPref(uploadDatePrefName, Date.now());
 
-        await Pioneer.utils.submitEncryptedPing("pathfinder-event", 1, {
-          eventId: "pingsSent",
+        await Pioneer.submitEncryptedPing("pathfinder-event", 1, {
+          eventId: `pingsSent:${type}`,
           timestamp: Math.round(Date.now() / 1000),
           context: "1",
         });
@@ -174,12 +175,12 @@ this.LogHandler = {
             continue;
           }
 
-          await Pioneer.utils.submitEncryptedPing("pathfinder-log", 1, payload);
+          await Pioneer.submitEncryptedPing("pathfinder-log", 1, payload);
           pingCount++;
         }
 
-        await Pioneer.utils.submitEncryptedPing("pathfinder-event", 1, {
-          eventId: "pingsSent",
+        await Pioneer.submitEncryptedPing("pathfinder-event", 1, {
+          eventId: `pingsSent:${type}`,
           timestamp: Math.round(Date.now() / 1000),
           context: `${pingCount}`,
         });
