@@ -60,7 +60,7 @@ this.Bootstrap = {
       timestamp: Math.round(Date.now() / 1000),
       context: `${reason}`,
     };
-    await Pioneer.utils.submitEncryptedPing("pathfinder-event", 1, payload);
+    await Pioneer.submitEncryptedPing("pathfinder-event", 1, payload);
 
     // Always set EXPIRATION_DATE_PREF if it not set, even if outside of install.
     // This is a failsafe if opt-out expiration doesn't work, so should be resilient.
@@ -114,7 +114,7 @@ this.Bootstrap = {
       timestamp: Math.round(Date.now() / 1000),
       context: `${reason}`,
     };
-    await Pioneer.utils.submitEncryptedPing("pathfinder-event", 1, payload);
+    await Pioneer.submitEncryptedPing("pathfinder-event", 1, payload);
 
     if (isStartupFinished) {
       LogHandler.shutdown();
