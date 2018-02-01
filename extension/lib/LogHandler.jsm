@@ -75,10 +75,9 @@ this.LogHandler = {
     this.uploadPings("timer");
   },
 
-  async generateEntries(type) {
+  async generateEntries(type, branch) {
     const pingCount = Math.floor(Math.random() * 5) + 1; // Returns a random number from 1-5
 
-    const branch = Pioneer.utils.chooseBranch();
     const entriesMinSize = branch.limit * (pingCount - 1);
 
     const entry = {
@@ -130,9 +129,10 @@ this.LogHandler = {
     let pingCount = 0;
 
     if (timesinceLastUpload > Config.logSubmissionInterval) {
-      let entries = await this.generateEntries(type);
-      let payload = { entries };
       const branch = Pioneer.utils.chooseBranch();
+
+      let entries = await this.generateEntries(type, branch);
+      let payload = { entries };
       const entriesPingSize = await Pioneer.utils.getEncryptedPingSize(
         "pathfinder-log", 1, payload
       );
@@ -143,7 +143,7 @@ this.LogHandler = {
         PrefUtils.setLongPref(uploadDatePrefName, Date.now());
 
         await Pioneer.submitEncryptedPing("pathfinder-event", 1, {
-          eventId: `pingsSent:${type}`,
+          eventId: `pingsSent:${branch.name}:${type}`,
           timestamp: Math.round(Date.now() / 1000),
           context: "1",
         });
@@ -178,7 +178,7 @@ this.LogHandler = {
         }
 
         await Pioneer.submitEncryptedPing("pathfinder-event", 1, {
-          eventId: `pingsSent:${type}`,
+          eventId: `pingsSent:${branch.name}:${type}`,
           timestamp: Math.round(Date.now() / 1000),
           context: `${pingCount}`,
         });
