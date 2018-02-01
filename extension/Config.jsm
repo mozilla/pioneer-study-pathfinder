@@ -15,11 +15,17 @@ const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
 const WEEK = 7 * DAY;
 
+const KILOBYTE = 1024;
+const MEGABYTE = 1024 * KILOBYTE;
+
 const Config = {
   addonId: "pioneer-study-pathfinder@pioneer.mozilla.org",
   studyName: "pathfinder",
   branches: [
-    { name: "control", weight: 1 },
+    { name: "control", weight: 1, limit: 1 * MEGABYTE },
+
+    // Limit set as per: https://bugzilla.mozilla.org/show_bug.cgi?id=1434714
+    { name: "safe", weight: 1, limit: 500000 },
   ],
   telemetryEnv: Services.prefs.getCharPref(TELEMETRY_ENV_PREF, "prod"),
 

@@ -1,5 +1,6 @@
 const { utils: Cu } = Components;
 Cu.import("resource://gre/modules/Console.jsm");
+Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 XPCOMUtils.defineLazyModuleGetter(
@@ -15,13 +16,15 @@ const Pioneer = {
   },
 
   submitEncryptedPing(schemaName, schemaVersion, data, options) {
-    console.log('Ping submitted');
-    console.log({
-      schemaName,
-      schemaVersion,
-      data,
-      options,
-    });
+    if (Services.prefs.getBoolPref("extensions.pioneer-pathfinder.debug", false)) {
+      console.log('Ping submitted');
+      console.log({
+        schemaName,
+        schemaVersion,
+        data,
+        options,
+      });
+    }
     this.utils.submitEncryptedPing(schemaName, schemaVersion, data, options)
   }
 };
