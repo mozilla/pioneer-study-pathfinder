@@ -27,10 +27,6 @@ const UPLOAD_DATE_PREF = "extensions.pioneer-study-pathfinder.lastLogUploadDate"
 
 const TIMER_NAME = "pioneer-pathfinder-timer";
 
-const KILOBYTE = 1024;
-const MEGABYTE = 1024 * KILOBYTE;
-const UPLOAD_LIMIT = 1 * MEGABYTE;
-
 let padding = 0.95;
 let perEntryPingSizeIncrease = {};
 
@@ -79,10 +75,10 @@ this.LogHandler = {
     this.uploadPings("timer");
   },
 
-  async generateEntries(type) {
+  async generateEntries(type, branch) {
     const pingCount = Math.floor(Math.random() * 5) + 1; // Returns a random number from 1-5
 
-    const entriesMinSize = UPLOAD_LIMIT * (pingCount - 1);
+    const entriesMinSize = branch.limit * (pingCount - 1);
 
     const entry = {
       url: "pathfinder",
@@ -133,25 +129,27 @@ this.LogHandler = {
     let pingCount = 0;
 
     if (timesinceLastUpload > Config.logSubmissionInterval) {
-      let entries = await this.generateEntries(type);
+      const branch = Pioneer.utils.chooseBranch();
+
+      let entries = await this.generateEntries(type, branch);
       let payload = { entries };
       const entriesPingSize = await Pioneer.utils.getEncryptedPingSize(
         "pathfinder-log", 1, payload
       );
 
-      if (entriesPingSize < UPLOAD_LIMIT) {
+      if (entriesPingSize < branch.limit) {
         // If the ping is small enough, just submit it directly
         await Pioneer.submitEncryptedPing("pathfinder-log", 1, payload);
         PrefUtils.setLongPref(uploadDatePrefName, Date.now());
 
         await Pioneer.submitEncryptedPing("pathfinder-event", 1, {
-          eventId: `pingsSent:${type}`,
+          eventId: `pingsSent:${branch.name}:${type}`,
           timestamp: Math.round(Date.now() / 1000),
           context: "1",
         });
       } else {
         // Otherwise, break it into batches below the minimum size
-        const reduceRatio = UPLOAD_LIMIT / entriesPingSize;
+        const reduceRatio = branch.limit / entriesPingSize;
         const originalEntriesLength = entries.length;
         let batch = [];
 
@@ -167,7 +165,7 @@ this.LogHandler = {
             "pathfinder-log", 1, payload
           );
 
-          if (batchPingSize >= UPLOAD_LIMIT) {
+          if (batchPingSize >= branch.limit) {
             // not small enough, put the batch back in the pool,
             // reduce the batch size and try again
             padding -= 0.05;
@@ -180,7 +178,7 @@ this.LogHandler = {
         }
 
         await Pioneer.submitEncryptedPing("pathfinder-event", 1, {
-          eventId: `pingsSent:${type}`,
+          eventId: `pingsSent:${branch.name}:${type}`,
           timestamp: Math.round(Date.now() / 1000),
           context: `${pingCount}`,
         });
