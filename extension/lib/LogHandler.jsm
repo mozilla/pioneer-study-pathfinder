@@ -24,6 +24,7 @@ XPCOMUtils.defineLazyServiceGetter(
 this.EXPORTED_SYMBOLS = ["LogHandler"];
 
 const UPLOAD_DATE_PREF = "extensions.pioneer-study-pathfinder.lastLogUploadDate";
+const STUDY_BRANCH_PREF = "extensions.pioneer-pathfinder.studyBranch";
 
 const TIMER_NAME = "pioneer-pathfinder-timer";
 
@@ -129,7 +130,12 @@ this.LogHandler = {
     let pingCount = 0;
 
     if (timesinceLastUpload > Config.logSubmissionInterval) {
-      const branch = Pioneer.utils.chooseBranch();
+      const branchName = Services.prefs.getCharPref(STUDY_BRANCH_PREF, "");
+      let branch = Config.branches.find(b => b.name === branchName);
+      if (!branch) {
+        branch = await Pioneer.utils.chooseBranch();
+        Services.prefs.setCharPref(STUDY_BRANCH_PREF, branch.name);
+      }
 
       let entries = await this.generateEntries(type, branch);
       let payload = { entries };

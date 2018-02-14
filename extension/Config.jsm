@@ -25,7 +25,9 @@ const Config = {
     { name: "control", weight: 1, limit: 1 * MEGABYTE },
 
     // Limit set as per: https://bugzilla.mozilla.org/show_bug.cgi?id=1434714
-    { name: "safe", weight: 1, limit: 500000 },
+    // The hard limit is 500000 bytes but we subtract 20% to account for potential size changes
+    // from gzipping.
+    { name: "safe", weight: 1, limit: 400000 },
   ],
   telemetryEnv: Services.prefs.getCharPref(TELEMETRY_ENV_PREF, "prod"),
 
