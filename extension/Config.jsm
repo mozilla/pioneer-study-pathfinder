@@ -12,8 +12,6 @@ const LOG_UPLOAD_ATTEMPT_PREF = "extensions.pioneer-pathfinder.logUploadAttemptI
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 const HOUR = 60 * MINUTE;
-const DAY = 24 * HOUR;
-const WEEK = 7 * DAY;
 
 const KILOBYTE = 1024;
 const MEGABYTE = 1024 * KILOBYTE;

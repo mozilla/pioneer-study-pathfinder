@@ -16,6 +16,8 @@ module.exports = {
   ],
   root: true,
   rules: {
+    "mozilla/use-chromeutils-import": "off",
+
     "eqeqeq": "error",
     "no-var": "error",
     "prefer-const": "error",
