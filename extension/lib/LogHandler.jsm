@@ -28,7 +28,7 @@ const UPLOAD_DATE_PREF = "extensions.pioneer-study-pathfinder.lastLogUploadDate"
 const TIMER_NAME = "pioneer-pathfinder-timer";
 
 let padding = 0.95;
-let perEntryPingSizeIncrease = {};
+const perEntryPingSizeIncrease = {};
 
 let intervalId;
 
