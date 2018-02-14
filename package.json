@@ -3,6 +3,15 @@
   "description": "An add-on to help track down data loss in the Pioneer data-collection pipeline.",
   "version": "1.0.0",
   "author": "Mozilla",
+  "addon": {
+    "id": "pioneer-study-pathfinder@pioneer.mozilla.org",
+    "name": "Pioneer Pathfinder Study",
+    "minVersion": "55.0",
+    "maxVersion": "*",
+    "multiprocessCompatible": true,
+    "hasEmbeddedWebExtension": false,
+    "chrome": "pioneer-study-pathfinder"
+  },
   "bugs": {
     "url": "https://github.com/rehandalal/pioneer-study-pathfinder/issues"
   },
