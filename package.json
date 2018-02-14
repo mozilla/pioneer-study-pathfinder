@@ -20,6 +20,8 @@
   "repository": "rehandalal/pioneer-study-pathfinder",
   "scripts": {
     "build": "XPI=pioneer-study-pathfinder@mozilla.org.xpi bash ./bin/make-xpi.sh",
-    "lint": "eslint extension --ext=.js,.jsm"
+    "lint": "eslint extension --ext=.js,.jsm",
+    "pretest": "npm run lint",
+    "test": "echo 'no tests'"
   }
 }
