@@ -2,6 +2,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/* globals Bootstrap, Components, LogHandler, Pioneer, PrefUtils, Services, XPCOMUtils */
+
 const { utils: Cu } = Components;
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -56,7 +58,7 @@ this.Bootstrap = {
     }
 
     const payload = {
-      eventId: 'startup',
+      eventId: "startup",
       timestamp: Math.round(Date.now() / 1000),
       context: `${reason}`,
     };
@@ -85,6 +87,7 @@ this.Bootstrap = {
     }
   },
 
+  // eslint-disable-next-line no-unused-vars
   observe(subject, topic, data) {
     if (topic === UI_AVAILABLE_NOTIFICATION) {
       Services.obs.removeObserver(this, UI_AVAILABLE_NOTIFICATION);
@@ -110,7 +113,7 @@ this.Bootstrap = {
     }
 
     const payload = {
-      eventId: 'shutdown',
+      eventId: "shutdown",
       timestamp: Math.round(Date.now() / 1000),
       context: `${reason}`,
     };

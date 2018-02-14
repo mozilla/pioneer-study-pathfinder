@@ -1,18 +1,27 @@
 {
   "name": "pioneer-study-pathfinder",
+  "description": "An add-on to help track down data loss in the Pioneer data-collection pipeline.",
   "version": "1.0.0",
-  "description": "An addon to help track down data loss in the Pioneer data-collection pipeline.",
-  "scripts": {
-    "build": "XPI=pioneer-study-pathfinder@mozilla.org.xpi bash ./bin/make-xpi.sh"
-  },
-  "keywords": [],
   "author": "Mozilla",
-  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/rehandalal/pioneer-study-pathfinder/issues"
+  },
+  "dependencies": {},
   "devDependencies": {
-    "eslint": "^4.11.0",
-    "eslint-plugin-mozilla": "^0.4.9",
-    "eslint-plugin-no-unsanitized": "^2.0.1",
+    "eslint": "^4.17.0",
+    "eslint-plugin-mozilla": "^0.8.1",
+    "eslint-plugin-no-unsanitized": "^3.0.0",
     "mustache": "^2.3.0",
     "pioneer-utils": "^1.0.10"
+  },
+  "homepage": "https://github.com/rehandalal/pioneer-study-pathfinder",
+  "keywords": [],
+  "license": "MPL-2.0",
+  "repository": "rehandalal/pioneer-study-pathfinder",
+  "scripts": {
+    "build": "XPI=pioneer-study-pathfinder@mozilla.org.xpi bash ./bin/make-xpi.sh",
+    "lint": "eslint extension --ext=.js,.jsm",
+    "pretest": "npm run lint",
+    "test": "echo 'no tests'"
   }
 }

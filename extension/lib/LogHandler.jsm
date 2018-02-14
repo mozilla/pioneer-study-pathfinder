@@ -29,7 +29,7 @@ const STUDY_BRANCH_PREF = "extensions.pioneer-pathfinder.studyBranch";
 const TIMER_NAME = "pioneer-pathfinder-timer";
 
 let padding = 0.95;
-let perEntryPingSizeIncrease = {};
+const perEntryPingSizeIncrease = {};
 
 let intervalId;
 

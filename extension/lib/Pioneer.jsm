@@ -17,15 +17,17 @@ const Pioneer = {
 
   submitEncryptedPing(schemaName, schemaVersion, data, options) {
     if (Services.prefs.getBoolPref("extensions.pioneer-pathfinder.debug", false)) {
-      console.log('Ping submitted');
+      /* eslint-disable no-console */
+      console.log("Ping submitted");
       console.log({
         schemaName,
         schemaVersion,
         data,
         options,
       });
+      /* eslint-enable no-console */
     }
-    this.utils.submitEncryptedPing(schemaName, schemaVersion, data, options)
+    this.utils.submitEncryptedPing(schemaName, schemaVersion, data, options);
   }
 };
 
