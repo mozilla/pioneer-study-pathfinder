@@ -26,6 +26,7 @@
   "homepage": "https://github.com/rehandalal/pioneer-study-pathfinder",
   "keywords": [],
   "license": "MPL-2.0",
+  "private": true,
   "repository": "rehandalal/pioneer-study-pathfinder",
   "scripts": {
     "build": "XPI=pioneer-study-pathfinder@mozilla.org.xpi bash ./bin/make-xpi.sh",
