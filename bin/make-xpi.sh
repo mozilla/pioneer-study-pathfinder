@@ -17,8 +17,8 @@ function cleanup {
 trap cleanup EXIT
 
 # fill templates, could be fancier
-node_modules/.bin/mustache addon.json templates/install.rdf.mustache > "${DEST}/install.rdf"
-node_modules/.bin/mustache addon.json templates/chrome.manifest.mustache > "${DEST}/chrome.manifest"
+node_modules/.bin/mustache package.json templates/install.rdf.mustache > "${DEST}/install.rdf"
+node_modules/.bin/mustache package.json templates/chrome.manifest.mustache > "${DEST}/chrome.manifest"
 cp node_modules/pioneer-utils/dist/PioneerUtils.jsm "${DEST}"
 
 cp -rp extension/* "$DEST"
